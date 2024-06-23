@@ -2,7 +2,7 @@ DROP TABLE IF EXISTS Users;
 DROP TABLE IF EXISTS Questions;
 DROP TABLE IF EXISTS Chapters;
 DROP TABLE IF EXISTS Progress;
-
+-- the commands above will clear any pre-existing tables if we run this script
 
 
 CREATE TABLE Users(
