@@ -33,3 +33,9 @@ def close_db(e=None):
     db = g.pop('db', None) # retrieve db connection it if exists, else None
     if db is not None: # if u find a connection, close it
         db.close()
+
+
+def init_app(app):
+    app.teardown_appcontext(close_db) # tells Flask to call that function when cleaning up after returning the response.
+    app.cli.add_command(init_db_command) # adds a new command that can be called with the flask command.
+
