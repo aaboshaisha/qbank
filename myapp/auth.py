@@ -4,6 +4,7 @@ from flask import (Blueprint, request, render_template, redirect, url_for, flash
 from werkzeug.security import generate_password_hash, check_password_hash
 from myapp.db import get_db
 
+
 bp = Blueprint('auth', __name__, url_prefix='/auth')
 
 @bp.route('/register', methods=['GET', 'POST'])
@@ -50,7 +51,7 @@ def login():
         elif not valid_password(password):
             error = 'Please enter valid password.'   
         else:
-            user = db.execute('SELECT * FROM Users WHERE email = ?',list (email,)).fetchone()
+            user = db.execute('SELECT * FROM Users WHERE email = ?', (email,)).fetchone()
             if user is None:
                 error = 'Incorrect email.'
             elif not check_password_hash(user['password'], password):
@@ -58,7 +59,7 @@ def login():
             else:
                 session.clear()
                 session['user_id'] = user['id']
-                return redirect(url_for('index'))
+                return redirect(url_for('qbank.question'))
         flash(error)
     return render_template('auth/login.html')
 
