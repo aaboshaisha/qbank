@@ -3,8 +3,12 @@ import sqlite3
 import click # module for creating command line interfaces
 from flask import current_app, g # g is a special obj that works like namespace 
 
+import logging 
+
 def get_db(): # connect to the database and return a database connection object.
+    logging.debug("get_db() called")
     if 'db' not in g:
+        logging.debug("Creating new db connection")
         # if db not already stored in g, connect to it and store the connection in g 
         g.db = sqlite3.connect(
             current_app.config['DATABASE'],
@@ -12,7 +16,11 @@ def get_db(): # connect to the database and return a database connection object.
         )
         g.db.row_factory = sqlite3.Row # tells connection to return rows that behave like dicts
         # so we can access columns by name
-        return g.db
+    else:
+        logging.debug("Using existing db connection")
+    return g.db
+
+
 
 # function to execute the commands in schema.sql a.k.a initialize the database
 def init_db():
