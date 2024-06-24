@@ -1,13 +1,16 @@
 import os
+import logging
 
 from flask import Flask
 
 def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__, instance_relative_config=True)
+    logging.basicConfig(level=logging.DEBUG)
+
     # set some default configuration for app to use
     app.config.from_mapping(
-        SECRTE_KEY='dev',
+        SECRET_KEY='dev',
         DATABASE=os.path.join(app.instance_path, 'myapp.sqlite')
     )
 
@@ -31,8 +34,11 @@ def create_app(test_config=None):
     from . import auth
     app.register_blueprint(auth.bp)
 
+    from . import questions
+    app.register_blueprint(questions.bp)
+
     # render a simple page
-    @app.route('/hello')
+    @app.route('/')
     def hello():
         return 'Hello, World'
     
