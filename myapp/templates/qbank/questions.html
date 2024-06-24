@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block header%}
+<h1>{% block title %}Questions{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+<form method="POST">
+    <select name="chapter" id="chapter">
+        {% for chapter in chapters %}
+        <option value="{{ chapter.id }}">{{ chapter.title }}</option>
+        {% endfor %}
+    </select>
+    <input type="submit" value="Select Chapter">
+</form>
+
+<div id="question"> {{ question.content }}</div>
+<div id="choices">
+    <input type="radio" name="radioButton" value="{{ question.option_a }}">
+    <input type="radio" name="radioButton" value="{{ question.option_b }}">
+    <input type="radio" name="radioButton" value="{{ question.option_c }}">
+    <input type="radio" name="radioButton" value="{{ question.option_d }}">
+</div>
+<div id="explaination">{{ question.explaination }}</div>
+
+{% endblock %}
