@@ -12,23 +12,33 @@ import logging
 def question():
     db = get_db()
     chapters = db.execute('SELECT id,title FROM Chapters').fetchall() # get to pass to form view
-    question = db.execute('SELECT * FROM Questions LIMIT 1')
-
+    question = db.execute('SELECT * FROM Questions LIMIT 1').fetchone()
+    
     if request.method == 'POST':
         chapter_id = request.form.get('chapter-select')
         user_id = g.user['id']
         # get current state for that user
-        question_id = db.execute('''SELECT question_id FROM currentState
+        current_state = db.execute('''SELECT * FROM currentState
                                   WHERE currentState.user_id = ?
                                  AND currentState.chapter_id = ? ''', (user_id, chapter_id)).fetchone()
         
-        # get question from Questions table
-        question = db.execute(''' SELECT * FROM Questions 
-                              WHERE id = ? AND chapter_id = ?''', (question_id, chapter_id)).fetchone()
-        if question is None:
-            question = db.execute('SELECT * FROM Questions WHERE chapter_id = ?', (chapter_id, )).fetchone()
-        return render_template('qbank/questions_partial.html', question=question)
-    
+        if current_state:# get question from Questions table
+            question = db.execute(''' SELECT * FROM Questions 
+                                  WHERE id = ? AND chapter_id = ?''', 
+                                  (current_state['question_id'], chapter_id)).fetchone()
+        if not current_state or not question:
+            # First-time user or no current state, get the first question of the chapter
+            question = db.execute('''
+                SELECT * FROM Questions 
+                WHERE chapter_id = ? 
+                ORDER BY id ASC 
+                LIMIT 1
+            ''', (chapter_id,)).fetchone()
+        if question:
+            return render_template('qbank/questions_partial.html', question=question)
+        else:
+            return 'Please select a chapter to start.'
+    # GET request
     return render_template('qbank/questions.html', chapters=chapters)
 
 
@@ -52,4 +62,3 @@ def answer():
     logging.debug(f"Debug: question_id : {question_id}, selected answer: {selected_answer}, corrrect: {question['correct_option']}, explaination: {explaination}")
 
     return render_template('qbank/answer_partial.html', is_correct = is_correct, explaination = explaination)
-
