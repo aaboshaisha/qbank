@@ -13,15 +13,10 @@ def question():
     db = get_db()
     chapters = db.execute('SELECT id,title FROM Chapters').fetchall() # get to pass to form view
     question = db.execute('SELECT * FROM Questions LIMIT 1')
-    logging.debug("Entering questions route")
-    logging.debug(f"Request method: {request.method}")
-    logging.debug(f"Form data: { request.form} ")
-    logging.debug(f"Args: {request.args}")
 
     if request.method == 'POST':
         chapter_id = request.form.get('chapter-select')
         user_id = g.user['id']
-        logging.debug(f"POST request - Chapter ID: {chapter_id}, User ID: {user_id}")
         # get current state for that user
         question_id = db.execute('''SELECT question_id FROM currentState
                                   WHERE currentState.user_id = ?
@@ -40,7 +35,21 @@ def question():
 @bp.route('/answer', methods=['POST'])
 @login_required
 def answer():
-    db = get_db()
     question_id = request.form['question_id']
+    selected_answer = request.form['answer']
+    
+    db = get_db()
+    question = db.execute('SELECT * FROM Questions WHERE Questions.id = ?', (question_id, )).fetchone()
+    explaination = question['explaination']
+    
+    is_correct = question['correct_option'] == selected_answer
 
+    # record user progress 
+    db.execute('''INSERT OR REPLACE INTO Progress (user_id, question_id, answer, is_correct)
+               VALUES (?,?,?,?)''', (g.user['id'], question_id, selected_answer, is_correct))
+    db.commit()
+
+    logging.debug(f"Debug: question_id : {question_id}, selected answer: {selected_answer}, corrrect: {question['correct_option']}, explaination: {explaination}")
+
+    return render_template('qbank/answer_partial.html', is_correct = is_correct, explaination = explaination)
 
