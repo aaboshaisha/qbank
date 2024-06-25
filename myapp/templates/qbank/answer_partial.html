@@ -1,4 +1,20 @@
 <div>
-   <h3>{% if is_correct %} Correct {% else %} Incorrect! {% endif %}</h3>
-   <div>{% if explaination %} Explaination: {{ explaination }} {% else %} .. {% endif %}</div>
+    <h3>{% if is_correct %} Correct {% else %} Incorrect! {% endif %}</h3>
+    <div>{% if explaination %} Explaination: {{ explaination }} {% else %} .. {% endif %}</div>
+    <br>
+    <span>
+        {% if prev_question %}
+        <a href="{{ url_for('qbank.question', question_id=prev_question.id, chapter_id=prev_question.chapter_id) }}"
+            hx-get="{{ url_for('qbank.question', question_id=prev_question.id, chapter_id=prev_question.chapter_id) }}"
+            hx-target="#question-area"
+            hx-swap="innerHTML">Previous Question</a>
+        {% endif %}
+
+        {% if next_question %}
+        <a href="{{ url_for('qbank.question', question_id=next_question.id, chapter_id=next_question.chapter_id) }}"
+            hx-get="{{ url_for('qbank.question', question_id=next_question.id, chapter_id=next_question.chapter_id) }}"
+            hx-target="#question-area"
+            hx-swap="innerHTML">Next Question</a>
+        {% endif %}
+    </span>
 </div>

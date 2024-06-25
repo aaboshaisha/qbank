@@ -2,7 +2,8 @@
 
 {% block header %}
 <h1>{% block title %}Questions{% endblock %}</h1>
-<select id="chapter-select" name="chapter-select" hx-post="/qbank/questions" hx-target="#question-area" hx-trigger="change">
+<select id="chapter-select" name="chapter-select" hx-post="/qbank/questions" hx-target="#question-area"
+    hx-trigger="change">
     <option value="">Select a chapter</option>
     {% for chapter in chapters %}
     <option value="{{ chapter.id }}">{{ chapter.title }}</option>
@@ -12,5 +13,7 @@
 {% endblock %}
 
 {% block content %}
+
 <div id="question-area"></div>
+
 {% endblock %}

@@ -10,13 +10,24 @@ import logging
 @bp.route('/questions', methods=['GET', 'POST'])
 @login_required
 def question():
+    user_id = g.user['id']
     db = get_db()
     chapters = db.execute('SELECT id,title FROM Chapters').fetchall() # get to pass to form view
-    question = db.execute('SELECT * FROM Questions LIMIT 1').fetchone()
+    # handle prev & next buttons where qid and cid are sent via GET
+    question_id = request.args.get('question_id')
+    chapter_id = request.form.get('chapter-select') if request.method=='POST' else request.args.get('chapter_id')
     
-    if request.method == 'POST':
-        chapter_id = request.form.get('chapter-select')
-        user_id = g.user['id']
+    if chapter_id and not question_id:
+        question = db.execute('SELECT * FROM Questions WHERE chapter_id = ? ORDER BY id ASC LIMIT 1', (chapter_id,)).fetchone()
+    elif question_id:
+        question = db.execute('SELECT * FROM Questions WHERE id = ?', (question_id,)).fetchone()
+    else:
+        question = None
+
+    # For both POST requests and HTMX GET requests, we return the partial template.
+    # For regular GET requests (initial page load), we still return the full template.
+    if request.method == 'POST' or request.headers.get('HX-Request') == 'true':
+        
         # get current state for that user
         current_state = db.execute('''SELECT * FROM currentState
                                   WHERE currentState.user_id = ?
@@ -26,14 +37,6 @@ def question():
             question = db.execute(''' SELECT * FROM Questions 
                                   WHERE id = ? AND chapter_id = ?''', 
                                   (current_state['question_id'], chapter_id)).fetchone()
-        if not current_state or not question:
-            # First-time user or no current state, get the first question of the chapter
-            question = db.execute('''
-                SELECT * FROM Questions 
-                WHERE chapter_id = ? 
-                ORDER BY id ASC 
-                LIMIT 1
-            ''', (chapter_id,)).fetchone()
         if question:
             return render_template('qbank/questions_partial.html', question=question)
         else:
@@ -59,6 +62,14 @@ def answer():
                VALUES (?,?,?,?)''', (g.user['id'], question_id, selected_answer, is_correct))
     db.commit()
 
-    logging.debug(f"Debug: question_id : {question_id}, selected answer: {selected_answer}, corrrect: {question['correct_option']}, explaination: {explaination}")
-
-    return render_template('qbank/answer_partial.html', is_correct = is_correct, explaination = explaination)
+    next_question = db.execute('''SELECT * FROM Questions 
+                               WHERE id > ? AND chapter_id = ? 
+                               ORDER BY id ASC LIMIT 1''', (question_id, question['chapter_id'])).fetchone()
+    prev_question = db.execute('''SELECT * FROM Questions 
+                               WHERE id < ? AND chapter_id = ? 
+                               ORDER BY id DESC LIMIT 1''', (question_id, question['chapter_id'])).fetchone()
+    return render_template('qbank/answer_partial.html', 
+                           is_correct = is_correct,
+                           explaination = explaination, 
+                           next_question=next_question, 
+                           prev_question=prev_question)
