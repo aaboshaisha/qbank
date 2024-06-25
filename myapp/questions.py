@@ -12,6 +12,7 @@ def question():
     db = get_db()
     chapters = db.execute('SELECT id,title FROM Chapters').fetchall() # get to pass to form view
     question = db.execute('SELECT * FROM Questions LIMIT 1')
+
     if request.method == 'POST':
         chapter_id = request.form['chapter']
         user_id = g.user['id']
