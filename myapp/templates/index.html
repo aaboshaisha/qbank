@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block title %}Home{% endblock %}
+
+{% block header %}
+    <h1>Welcome to Pathology QBank</h1>
+{% endblock %}
+
+{% block content %}
+    <div class="index-content">
+        <h2>Prepare for UK Pathology Royal College Exams</h2>
+        <p>Welcome to the only question bank specifically designed for UK pathology Royal College exams.</p>
+        
+        <div class="features">
+            <h3>Key Features:</h3>
+            <ul>
+                <li>Comprehensive coverage of exam topics</li>
+                <li>High-quality, exam-style questions</li>
+                <li>Detailed explanations for each answer</li>
+                <li>Track your progress and identify weak areas</li>
+            </ul>
+        </div>
+
+        {% if g.user %}
+            <div class="cta-button">
+                <a href="{{ url_for('qbank.question') }}" class="button">Start Practicing</a>
+            </div>
+        {% endif %}
+
+    </div>
+{% endblock %}
