@@ -1,11 +1,24 @@
 import functools
 
-from flask import (Blueprint, request, render_template, redirect, url_for, flash, session, g )
+from flask import (Blueprint, request, render_template, redirect, url_for, flash, session, g, abort)
 from werkzeug.security import generate_password_hash, check_password_hash
 from myapp.db import get_db
 
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
+
+# stripe integration
+import stripe
+
+# products dict
+products = {
+    'registration': {
+        'name': 'QBank Registration',
+        'price': 20000 # amount in cents eg $200
+    }
+}
+
+
 
 @bp.route('/register', methods=['GET', 'POST'])
 def register():
@@ -31,12 +44,49 @@ def register():
                     )
                 db.commit()
             except db.IntegrityError: # will occur if the username already exists
-                error = f"{email} is already registered."
-            else:
+                flash(f'User {email} already exists. Try logging in.')
                 return redirect(url_for('auth.login'))
-        
+            
+            # retrieve user id
+            user_id = db.execute('SELECT * FROM Users WHERE email = ?', (email, )).fetchone()['id']
+            # Assuming the registration product ID is 'registration'
+            product_id = 'registration'
+            if product_id not in products:
+                abort(404)
+            
+            # create stripe checkout session
+            try:
+                # Create a new Stripe Checkout Session
+                checkout_session = stripe.checkout.Session.create(
+                    line_items=[
+                        {
+                            'price_data': {
+                                'product_data': {'name': products[product_id]['name'],},
+                                'unit_amount': products[product_id]['price'],
+                                'currency': 'gbp',
+                            },
+                            'quantity': 1,
+                        },
+                    ],
+                    payment_method_types=['card'],
+                    mode='payment',
+                    success_url=url_for('auth.success', _external=True) + '?session_id={CHECKOUT_SESSION_ID}',
+                    cancel_url=url_for('auth.cancel', _external=True),
+                    metadata={'user_id': user_id}
+                )
+                return redirect(checkout_session.url, code=303)
+            except Exception as e:
+                flash(f'Error creating Stripe session: {e}')
         flash(error)
     return render_template('auth/register.html')
+
+@bp.route('/success')
+def success():
+    return render_template('auth/success.html')
+
+@bp.route('/cancel')
+def cancel():
+    return render_template('auth/cancel.html')
 
 
 @bp.route('/login', methods=['GET', 'POST'])
