@@ -68,13 +68,32 @@ INSERT INTO Chapters (title) VALUES ('Chapter 3: Inflammation and Repair');
 
 -- Questions
 INSERT INTO Questions (content, option_a, option_b, option_c, option_d, correct_option, explaination, chapter_id) VALUES 
-('What is pathology?', 'Study of diseases', 'Study of animals', 'Study of plants', 'Study of ecosystems', 'A', 'Pathology is the study of diseases.', 1);
+('Which of the following is not a cardinal sign of inflammation?', 'Redness', 'Swelling', 'Fever', 'Pain', 'Fever', 'Fever is not a cardinal sign of inflammation.', 1);
 
 INSERT INTO Questions (content, option_a, option_b, option_c, option_d, correct_option, explaination, chapter_id) VALUES 
-('What is cellular adaptation?', 'Cell death', 'Change in cell size, number, phenotype', 'Formation of new cells', 'All of the above', 'B', 'Cellular adaptation involves changes in cell size, number, and phenotype.', 2);
+('What is the primary purpose of inflammation?', 'To eliminate the initial cause of cell injury', 'To cause pain', 'To slow down blood flow', 'To cool down the body', 'To eliminate the initial cause of cell injury', 'The primary purpose of inflammation is to eliminate the initial cause of cell injury.', 1);
 
 INSERT INTO Questions (content, option_a, option_b, option_c, option_d, correct_option, explaination, chapter_id) VALUES 
-('What is inflammation?', 'A process of healing', 'A process of cell growth', 'A process of cell death', 'A process of blood clotting', 'A', 'Inflammation is a process of healing.', 3);
+('What are granulocytes?', 'A type of white blood cell', 'A type of red blood cell', 'A type of platelet', 'None of the above', 'A type of white blood cell', 'Granulocytes are a type of white blood cell involved in inflammation.', 1);
+
+INSERT INTO Questions (content, option_a, option_b, option_c, option_d, correct_option, explaination, chapter_id) VALUES 
+('What is atrophy?', 'Decrease in cell size', 'Increase in cell size', 'Increase in cell number', 'Formation of new cells', 'Decrease in cell size', 'Atrophy is a decrease in cell size.', 2);
+
+INSERT INTO Questions (content, option_a, option_b, option_c, option_d, correct_option, explaination, chapter_id) VALUES 
+('What is metaplasia?', 'Change from one type of cell to another', 'Increase in cell size', 'Decrease in cell number', 'Cell death', 'Change from one type of cell to another', 'Metaplasia is the change from one type of cell to another.', 2);
+
+INSERT INTO Questions (content, option_a, option_b, option_c, option_d, correct_option, explaination, chapter_id) VALUES 
+('What is apoptosis?', 'Programmed cell death', 'Uncontrolled cell growth', 'Formation of new cells', 'Decrease in cell size', 'Programmed cell death', 'Apoptosis is the process of programmed cell death.', 2);
+
+INSERT INTO Questions (content, option_a, option_b, option_c, option_d, correct_option, explaination, chapter_id) VALUES 
+('What is the main function of macrophages?', 'Phagocytosis', 'Cell division', 'Protein synthesis', 'DNA replication', 'Phagocytosis', 'The main function of macrophages is phagocytosis.', 3);
+
+INSERT INTO Questions (content, option_a, option_b, option_c, option_d, correct_option, explaination, chapter_id) VALUES 
+('What is an example of a chronic inflammatory disease?', 'Rheumatoid arthritis', 'Acute bronchitis', 'Seasonal flu', 'Food poisoning', 'Rheumatoid arthritis', 'Rheumatoid arthritis is an example of a chronic inflammatory disease.', 3);
+
+INSERT INTO Questions (content, option_a, option_b, option_c, option_d, correct_option, explaination, chapter_id) VALUES 
+('What is the role of cytokines in inflammation?', 'They act as signaling molecules', 'They provide structural support', 'They transport oxygen', 'They store energy', 'They act as signaling molecules', 'Cytokines act as signaling molecules in the inflammatory response.', 3);
+
 
 -- Progress
 INSERT INTO Progress (user_id, question_id, answer, is_correct) VALUES (1, 1, 'A', 1);
