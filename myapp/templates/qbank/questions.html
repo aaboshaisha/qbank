@@ -2,44 +2,15 @@
 
 {% block header %}
 <h1>{% block title %}Questions{% endblock %}</h1>
-<form method="POST" style="display: inline-block;">
-    <select name="chapter" id="chapter" style="display: inline-block; vertical-align: middle;">
-        {% for chapter in chapters %}
-        <option value="{{ chapter.id }}">{{ chapter.title }}</option>
-        {% endfor %}
-    </select>
-    <input type="submit" value="Select Chapter" style="display: inline-block; vertical-align: middle; margin-left: 10px;">
-</form>
+<select id="chapter-select" name="chapter-select" hx-post="/qbank/questions" hx-target="#question-area" hx-trigger="change">
+    <option value="">Select a chapter</option>
+    {% for chapter in chapters %}
+    <option value="{{ chapter.id }}">{{ chapter.title }}</option>
+    {% endfor %}
+</select>
+
 {% endblock %}
 
 {% block content %}
-
-<div id="question">{{ question.content }}</div>
-<div id="choices">
-    <form method="POST">
-        <label>
-            <input type="radio" name="radioButton" value="{{ question.option_a }}">
-            {{ question.option_a }}
-        </label>
-        <br>
-        <label>
-            <input type="radio" name="radioButton" value="{{ question.option_b }}">
-            {{ question.option_b }}
-        </label>
-        <br>
-        <label>
-            <input type="radio" name="radioButton" value="{{ question.option_c }}">
-            {{ question.option_c }}
-        </label>
-        <br>
-        <label>
-            <input type="radio" name="radioButton" value="{{ question.option_d }}">
-            {{ question.option_d }}
-        </label>
-        <br>
-        <input type="submit" value="Answer">
-    </form>
-</div>
-<div id="explanation">{{ question.explanation }}</div>
-
+<div id="question-area"></div>
 {% endblock %}

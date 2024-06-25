@@ -6,9 +6,9 @@ from flask import current_app, g # g is a special obj that works like namespace
 import logging 
 
 def get_db(): # connect to the database and return a database connection object.
-    logging.debug("get_db() called")
+    # logging.debug("get_db() called")
     if 'db' not in g:
-        logging.debug("Creating new db connection")
+        # logging.debug("Creating new db connection")
         # if db not already stored in g, connect to it and store the connection in g 
         g.db = sqlite3.connect(
             current_app.config['DATABASE'],
