@@ -31,6 +31,7 @@ def create_app(test_config=None):
     else:
         # load from file passed
         app.config.from_mapping(test_config)
+        app.testing = test_config.get('Testing', False)
 
     # ensure instance folder exists
     try:
